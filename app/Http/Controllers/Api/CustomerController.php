@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateCustomerRequest;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -16,7 +17,17 @@ class CustomerController extends Controller
      */
     public function index()
     {
-        $data = Customer::latest('id')->paginate(5);
+        $term = request('term', null);
+
+        $data = Customer::latest('id')
+            ->when($term, function ($query, $term) {
+                $query->whereAny([
+                    'name',
+                    'email',
+                    'phone',
+                    'address',
+                ], 'like', "%$term%");
+            })->paginate(5);
 
         return response()->json($data);
     }
@@ -79,16 +90,9 @@ class CustomerController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateCustomerRequest $request, string $id)
     {
-        $data = $request->validate([
-            'name'      => 'required|max:255',
-            'avatar'    => 'nullable|image|max:2048',
-            'address'   => 'required|max:255',
-            'phone'     => ['required', 'string', 'max:20', Rule::unique('customers')->ignore($id)],
-            'email'     => 'required|email|max:100',
-            'is_active' => ['nullable', Rule::in([0, 1])],
-        ]);
+        $data = $request->validated();
 
         $customer = Customer::find($id);
 

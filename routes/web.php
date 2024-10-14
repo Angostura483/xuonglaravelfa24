@@ -93,7 +93,40 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Route::get('bt1', function () {
+Route::resource('customers', CustomerController::class)->middleware('auth');
+Route::delete('customers/{customer}/forceDestroy', [CustomerController::class, 'forceDestroy'])->name('customers.forceDestroy');
+
+Route::resource('employees', EmployeeController::class);
+Route::delete('employees/{employee}/forceDestroy', [EmployeeController::class, 'forceDestroy'])->name('employees.forceDestroy');
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::get('session', function () {
+    // session()->put('orders', []);
+
+    // session()->put('orders.101', [
+    //     'name' => 'SP1',
+    //     'price' => 50000,
+    // ]);
+
+    // session(['orders.102' => ['name' => 'SP2', 'price' => 10000]]);
+
+    // session()->forget('ahihi');
+
+    // session()->invalidate();
+
+    // session()->flash('keke', 'OK');
+
+    // echo session('keke');
+
+    return session()->all();
+});
+
+
+
+// Route::get('btb1', function () {
 
 //     // 1. Truy vấn kết hợp nhiều bảng (JOIN):
 //     $users = DB::table('users as u')
@@ -161,7 +194,7 @@ Route::get('/', function () {
 //     // ...
 // });
 
-// Route::get('bt2', function () {
+// Route::get('btb2', function () {
 
 //     // 1. Tính tổng doanh thu theo tháng
 //     $sales = Sale::select(
@@ -217,54 +250,44 @@ Route::get('/', function () {
 // });
 
 
-
-Route::resource('customers', CustomerController::class)->middleware('auth');
-Route::delete('customers/{customer}/forceDestroy', [CustomerController::class, 'forceDestroy'])->name('customers.forceDestroy');
-
-Route::resource('employees', EmployeeController::class);
-Route::delete('employees/{employee}/forceDestroy', [EmployeeController::class, 'forceDestroy'])->name('employees.forceDestroy');
-
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-// BTB4
-// Câu 1
-Route::get('/movies', function () {
+/* BTB4
+    // Câu 1
+    Route::get('/movies', function () {
     echo "Đây là trang Movies";
     die;
-})->middleware('check.age');
+    })->middleware('check.age');
 
-// Câu 2
-Route::middleware('auth')->group(function () {
-    Route::get('/admin', function () {
-        echo "Đây là trang dành cho Admin";
-        die;
-    })->middleware('check.role:admin');
+    // Câu 2
+    Route::middleware('auth')->group(function () {
+        Route::get('/admin', function () {
+            echo "Đây là trang dành cho Admin";
+            die;
+        })->middleware('check.role:admin');
 
-    Route::get('/orders', function () {
-        echo "Đây là trang quản lý đơn hàng cho Nhân Viên";
-        die;
-    })->middleware('check.role:employee');
+        Route::get('/orders', function () {
+            echo "Đây là trang quản lý đơn hàng cho Nhân Viên";
+            die;
+        })->middleware('check.role:employee');
 
-    Route::get('/profile', function () {
-        echo "Đây là trang profile của Khách Hàng";
-        die;
-    })->middleware('check.role:customer');
-});
-
-// Câu 3
-Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function () {
-        echo "Đây là trang Dashboard";
-        die;
+        Route::get('/profile', function () {
+            echo "Đây là trang profile của Khách Hàng";
+            die;
+        })->middleware('check.role:customer');
     });
-});
 
-Route::get('/register1', [AuthController::class, 'showRegisterForm'])->name('register1');
-Route::post('/register1', [AuthController::class, 'register']);
+    // Câu 3
+    Route::middleware('auth')->group(function () {
+        Route::get('/dashboard', function () {
+            echo "Đây là trang Dashboard";
+            die;
+        });
+    });
 
-Route::get('/login1', [AuthController::class, 'showLoginForm'])->name('login1');
-Route::post('/login1', [AuthController::class, 'login']);
+    Route::get('/register1', [AuthController::class, 'showRegisterForm'])->name('register1');
+    Route::post('/register1', [AuthController::class, 'register']);
 
-Route::get('/logout1', [AuthController::class, 'logout'])->name('logout1');
+    Route::get('/login1', [AuthController::class, 'showLoginForm'])->name('login1');
+    Route::post('/login1', [AuthController::class, 'login']);
+
+    Route::get('/logout1', [AuthController::class, 'logout'])->name('logout1');
+*/
