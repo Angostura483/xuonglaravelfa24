@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Middleware\Authenticate;
@@ -226,3 +227,44 @@ Route::delete('employees/{employee}/forceDestroy', [EmployeeController::class, '
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+// BTB4
+// Câu 1
+Route::get('/movies', function () {
+    echo "Đây là trang Movies";
+    die;
+})->middleware('check.age');
+
+// Câu 2
+Route::middleware('auth')->group(function () {
+    Route::get('/admin', function () {
+        echo "Đây là trang dành cho Admin";
+        die;
+    })->middleware('check.role:admin');
+
+    Route::get('/orders', function () {
+        echo "Đây là trang quản lý đơn hàng cho Nhân Viên";
+        die;
+    })->middleware('check.role:employee');
+
+    Route::get('/profile', function () {
+        echo "Đây là trang profile của Khách Hàng";
+        die;
+    })->middleware('check.role:customer');
+});
+
+// Câu 3
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', function () {
+        echo "Đây là trang Dashboard";
+        die;
+    });
+});
+
+Route::get('/register1', [AuthController::class, 'showRegisterForm'])->name('register1');
+Route::post('/register1', [AuthController::class, 'register']);
+
+Route::get('/login1', [AuthController::class, 'showLoginForm'])->name('login1');
+Route::post('/login1', [AuthController::class, 'login']);
+
+Route::get('/logout1', [AuthController::class, 'logout'])->name('logout1');
