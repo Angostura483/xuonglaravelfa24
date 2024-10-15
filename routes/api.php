@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CustomerController;
 use App\Http\Controllers\Api\ProjectController;
 use App\Http\Controllers\Api\TaskController;
@@ -18,10 +19,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::apiResource('customers', CustomerController::class);
 
 Route::delete('customers/{customer}/forceDestroy', [CustomerController::class, 'forceDestroy'])->name('customers.forceDestroy');
@@ -32,6 +29,7 @@ Route::get('/transaction/resume', [TransactionController::class, 'resumeTransact
 Route::post('/transaction/complete', [TransactionController::class, 'completeTransaction']);
 Route::post('/transaction/cancel', [TransactionController::class, 'cancelTransaction']);
 
+
 Route::apiResource('projects', ProjectController::class);
 
 Route::get('projects/{id}/tasks', [TaskController::class, 'index']);
@@ -39,3 +37,15 @@ Route::post('projects/{id}/tasks', [TaskController::class, 'store']);
 Route::get('projects/{id}/tasks/{taskId}', [TaskController::class, 'show']);
 Route::put('projects/{id}/tasks/{taskId}', [TaskController::class, 'update']);
 Route::delete('projects/{id}/tasks/{taskId}', [TaskController::class, 'destroy']);
+
+
+Route::post('register', [AuthController::class, 'register']);
+Route::post('login', [AuthController::class, 'login']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+
+    Route::post('logout', [AuthController::class, 'logout']);
+});

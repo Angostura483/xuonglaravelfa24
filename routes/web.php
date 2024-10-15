@@ -10,6 +10,8 @@ use App\Models\Sale;
 use App\Models\Expense;
 use App\Models\Tax;
 use App\Models\FinancialReport;
+use App\Models\Post;
+use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -122,6 +124,54 @@ Route::get('session', function () {
     // echo session('keke');
 
     return session()->all();
+});
+
+Route::get('/users', function () {
+    $data = User::with(['phone'])->paginate();
+
+    return view('user-list', compact('data'));
+});
+
+Route::get('/phones/{id}', function ($id) {
+    $phone = User::with(['user'])->find($id);
+
+    dd($phone->toArray());
+});
+
+Route::get('/posts/{id}', function ($id) {
+    $post = Post::with('comments')->find($id);
+
+    dd($post->toArray());
+});
+
+Route::get('/users/{id}/add-role', function ($id) {
+    $roles = [1, 5, 6, 8];
+
+    $user = User::find($id);
+
+    $user->roles()->attach($roles);
+
+    dd($user->load('roles')->toArray());
+});
+
+Route::get('/users/{id}/remove-role', function ($id) {
+    $rolesRemove = [5, 6];
+
+    $user = User::find($id);
+
+    $user->roles()->detach($rolesRemove);
+
+    dd($user->load('roles')->toArray());
+});
+
+Route::get('/users/{id}/sync-role', function ($id) {
+    $roles = [3, 6, 9, 10];
+
+    $user = User::find($id);
+
+    $user->roles()->sync($roles);
+
+    dd($user->load('roles')->toArray());
 });
 
 
